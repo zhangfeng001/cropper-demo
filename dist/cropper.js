@@ -1,12 +1,3 @@
-/*!
- * Cropper v0.9.2
- * https://github.com/fengyuanchen/cropper
- *
- * Copyright (c) 2014-2015 Fengyuan Chen and contributors
- * Released under the MIT license
- *
- * Date: 2015-04-18T04:35:01.500Z
- */
 
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
@@ -157,6 +148,9 @@
   }
 
   function getSourceCanvas(image, data) {
+    console.log(image)
+    console.log(data.naturalWidth)
+    console.log(data.naturalHeight)
     var canvas = $('<canvas>')[0],
         context = canvas.getContext('2d'),
         width = data.naturalWidth,
@@ -188,7 +182,7 @@
   function Cropper(element, options) {
     this.$element = $(element);
     this.options = $.extend({}, Cropper.DEFAULTS, $.isPlainObject(options) && options);
-
+    console.log(this.options)
     this.ready = false;
     this.built = false;
     this.rotated = false;
@@ -689,7 +683,7 @@
         }
       }
     },
-
+    //渲染选中区域fz
     renderCropBox: function () {
       var options = this.options,
           container = this.container,
@@ -1016,7 +1010,7 @@
         console.log(e.pageX,e.pageY)
         this.endX = e.pageX;
         this.endY = e.pageY;
-
+        //改变 cropBox X Y Width Height
         this.change();
       }
     },
@@ -1353,28 +1347,26 @@
       canvas.height = canvasHeight;
       context = canvas.getContext('2d');
       context.globalAlpha = 0.9; //设置画布透明度
-      // 登录状态下不会出现这行文字，点击页面右上角一键登录
       if (options.fillColor) {
         context.fillStyle = options.fillColor;
         context.fillRect(0, 0, canvasWidth, canvasHeight);
       }
 
       // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D.drawImage
+      //context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
       context.drawImage.apply(context,(function () {
-        console.log(this)
         var source = getSourceCanvas(this.$clone[0], this.image),
-            sourceWidth = source.width,
-            sourceHeight = source.height,
+            sourceWidth = source.width, //original source width
+            sourceHeight = source.height, //original source height
             args = [source],
-            srcX = data.x, // source canvas
-            srcY = data.y,
+            srcX = data.x, // source canvas  offset X
+            srcY = data.y, // offset Y
             srcWidth,
             srcHeight,
             dstX, // destination canvas
             dstY,
             dstWidth,
             dstHeight;
-
         if (srcX <= -originalWidth || srcX > sourceWidth) {
           srcX = srcWidth = dstX = dstWidth = 0;
         } else if (srcX <= 0) {
@@ -1396,9 +1388,7 @@
           dstY = 0;
           srcHeight = dstHeight = min(originalHeight, sourceHeight - srcY);
         }
-
         args.push(srcX, srcY, srcWidth, srcHeight);
-
         // Scale destination sizes
         if (scaledRatio) {
           dstX *= scaledRatio;
@@ -1406,15 +1396,13 @@
           dstWidth *= scaledRatio;
           dstHeight *= scaledRatio;
         }
-
         // Avoid "IndexSizeError" in IE and Firefox
         if (dstWidth > 0 && dstHeight > 0) {
           args.push(dstX, dstY, dstWidth, dstHeight);
         }
-
+        // args：offsetX offsetY width height 
         return args;
       }).call(this));
-
       let base64 = canvas.toDataURL('image/*'); 
       let blob = convertBase64UrlToBlob(base64);
       return {canvas,base64,blob};
@@ -1425,7 +1413,6 @@
 
       if (!this.disabled && !isUndefined(aspectRatio)) {
         options.aspectRatio = num(aspectRatio) || NaN; // 0 -> NaN
-
         if (this.built) {
           this.initCropBox();
 
@@ -1470,7 +1457,6 @@
   });
 
   prototype.change = function () {
-    console.log('change')
     var dragType = this.dragType,
         options = this.options,
         canvas = this.canvas,
@@ -1486,7 +1472,7 @@
         minTop = 0,
         maxWidth = container.width,
         maxHeight = container.height,
-        renderable = true,
+        renderable = true,//渲染能力
         aspectRatio = options.aspectRatio,
         range = {
           x: this.endX - this.startX,
@@ -1505,8 +1491,6 @@
       range.X = range.y * aspectRatio;
       range.Y = range.x / aspectRatio;
     }
-    console.log(dragType)
-    console.log(range)
     switch (dragType) {
       // Move cropBox
       case 'all':
@@ -1596,7 +1580,7 @@
         }
 
         break;
-
+      
       case 'ne':
         if (aspectRatio) {
           if (range.y <= 0 && (top <= minTop || right >= maxWidth)) {
@@ -1605,6 +1589,7 @@
           }
 
           height -= range.y;
+          console.log(height)
           top += range.y;
           width = height * aspectRatio;
         } else {
