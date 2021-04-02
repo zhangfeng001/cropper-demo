@@ -148,9 +148,6 @@
   }
 
   function getSourceCanvas(image, data) {
-    console.log(image)
-    console.log(data.naturalWidth)
-    console.log(data.naturalHeight)
     var canvas = $('<canvas>')[0],
         context = canvas.getContext('2d'),
         width = data.naturalWidth,
@@ -182,7 +179,6 @@
   function Cropper(element, options) {
     this.$element = $(element);
     this.options = $.extend({}, Cropper.DEFAULTS, $.isPlainObject(options) && options);
-    console.log(this.options)
     this.ready = false;
     this.built = false;
     this.rotated = false;
@@ -748,7 +744,6 @@
     // Override img element styles
     // Add `display:block` to avoid margin top issue (Occur only when margin-top <= -height)
     this.$preview.each(function () {
-      console.log($(this))
       var $this = $(this);
       $this.data(CROPPER_PREVIEW, {
         width: $this.width(),
@@ -759,7 +754,6 @@
   };
 
   prototype.resetPreview = function () {
-    console.log('123')
     this.$preview.each(function () {
       var $this = $(this);
 
@@ -1007,7 +1001,6 @@
         if (dragMoveEvent.isDefaultPrevented()) {
           return;
         }
-        console.log(e.pageX,e.pageY)
         this.endX = e.pageX;
         this.endY = e.pageY;
         //改变 cropBox X Y Width Height
@@ -1589,7 +1582,6 @@
           }
 
           height -= range.y;
-          console.log(height)
           top += range.y;
           width = height * aspectRatio;
         } else {

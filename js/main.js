@@ -98,7 +98,6 @@ $(function () {
       }
     }).cropper(options);
 
-
     // Methods
     $(document.body).on('click', '[data-method]', function () {
       var data = $(this).data(),
@@ -116,12 +115,9 @@ $(function () {
             }
           }
         }
-        console.log(data);
-        console.log(data.option);
         result = $image.cropper(data.method, data.option);
         if (data.method === 'getCroppedCanvas') {
           $('#getCroppedCanvasModal').modal().find('.modal-body').html(result.canvas);
-          console.log(result)
         }
         if ($.isPlainObject(result) && $target) {
           try {
